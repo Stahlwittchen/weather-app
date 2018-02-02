@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div id="qwerty">
+    </div>
+    <div>
+        <span class="location"></span>
+        <div class="weather">
+            <span class="temp"></span>
+            <span class="wind"></span>
+            <img class="img" src=""></img>
+            <span class="desc"></span>
+        </div>
+    </div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    $(function(){
+        var temp = $('.temp'),
+            location = $('.location'),
+            img = $('.img'),
+            desc = $('.desc');
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(locationSuccess);
+        }
+
+        function locationSuccess(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+
+            // Yahoo's PlaceFinder API http://developer.yahoo.com/geo/placefinder/
+            // We are passing the R gflag for reverse geocoding (coordinates to place name)
+//            var geoAPI = 'http://where.yahooapis.com/geocode?location='+lat+','+lon+'&flags=J&gflags=R&appid='+APPID;
+            var geoAPI = "http://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon="+ lon +"&appid=916b428b84d399ba3ed642d3421a25ba&units=metric&lang=ru";
+
+            if (window.console && window.console.info){
+                console.info("Coordinates: %f %f", lat, lon);
+            }
+
+            $.ajax({
+                url: geoAPI,
+                success: function(data) {
+                    var icon = data.weather[0].icon;
+                    console.log(data);
+                    location.html(data.sys.country);
+                    temp.html(data.main.temp);
+                    desc.html(data.weather[0].description);
+                    img.attr('src','http://openweathermap.org/img/w/' + icon + '.png');
+                    console.log(geoAPI);
+                }
+            });
+        }
+    });
+</script>
+</html>
